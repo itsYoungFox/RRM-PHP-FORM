@@ -1,0 +1,97 @@
+body {
+    font-family: system-ui, sans-serif, Tahoma, Arial, Helvetica;
+    font-size: 14px;
+    text-align: left;
+}
+
+.no-flex {
+    display: block !important;
+    flex: none !important;
+}
+
+.container {
+    max-width: 960px;
+    margin: auto;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-flow: column;
+}
+
+.row {
+    display: flex;
+    flex-flow: row;
+    margin-bottom: 20px;
+}
+
+.col {
+    display: flex;
+    flex-flow: column;
+}
+
+.col:nth-child(2) {
+    padding-left: 50px;
+}
+
+
+form {
+    width: max-content;
+    margin: auto;
+    padding: 20px 0px;
+}
+
+form .row {
+
+}
+
+form .row .col {
+    width: -webkit-fill-available;
+    width: moz-fill-available;
+}
+
+form .row .col label {
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-family: system-ui;
+}
+
+form .row .col select {
+    appearance: menulist !important;
+    -moz-appearance: menulist !important;
+    -webkit-appearance: menulist !important;
+    -o-appearance: menulist !important;
+}
+
+form .row .col input[type="text"],
+form .row .col input[type="email"],
+form .row .col input[type="tel"],
+form .row .col .select,
+form .row .col textarea {
+    padding: 9px 10px;
+    border: 1px solid rgba(46, 46, 46, 0.2);
+    border-radius: 6px;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 200px;
+}
+
+form .row .col .select select {
+    border: none;
+    width: -webkit-fill-available;
+    width: moz-fill-available;
+}
+
+form .row .col textarea {
+    height: 150px;
+}
+
+.submit {
+    margin-top: 10px;
+    width: 100%;
+    max-width: 300px;
+    padding: 13px;
+    background-color: rgb(50, 205, 50);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+}
