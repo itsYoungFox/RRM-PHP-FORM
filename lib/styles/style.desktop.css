@@ -75,6 +75,18 @@ form .row .col textarea {
     min-width: 200px;
 }
 
+form .row .col input:focus,
+form .row .col input:focus-visible,
+form .row .col textarea:focus,
+form .row .col textarea:focus-visible {
+    outline-color: rgba(46, 46, 46, 0.2);
+}
+
+form .row .col .select select:focus,
+form .row .col .select select:focus-visible {
+    outline-color: rgba(0, 0, 0, 0);
+}
+
 form .row .col .select select {
     border: none;
     width: -webkit-fill-available;

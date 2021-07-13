@@ -4,47 +4,46 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <link rel="stylesheet" media="screen and (min-width: 700px)" href="./lib/styles/style.desktop.css?v=3" /> -->
     <link rel="stylesheet" href="./lib/styles/style.desktop.css?v=5" />
     <link rel="stylesheet" media="screen and (max-width: 700px)" href="./lib/styles/style.mobile.css?v=3" />
     <title>RRM PHP FORM</title>
 </head>
 <body>
     <div class="container">
-        <form>
+        <form method="POST" id="form">
             <div class="row">
                 <div class="col">
-                    <label>First name</label><input type="text" name="fname" required>
+                    <label>First name</label><input type="text" name="firstname" >
                 </div>
                 <div class="col">
-                    <label>Last name</label><input type="text" name="lname" required>
+                    <label>Last name</label><input type="text" name="lastname" >
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
-                    <label>Email address</label><input type="email" name="email" required>
+                    <label>Email address</label><input type="email" name="email" >
                 </div>
                 <div class="col">
-                    <label>Telephone number</label><input type="tel" name="tel" required>
+                    <label>Telephone number</label><input type="tel" name="teleNumber" >
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
                     <label>Address 1</label>
-                    <input type="text" name="address_1" required>
+                    <input type="text" name="address1" >
                 </div>
                 <div class="col">
                     <label>Address 2</label>
-                    <input type="text" name="address_2">
+                    <input type="text" name="address2">
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
                     <label>Town</label>
-                    <input type="text" name="town" required>
+                    <input type="text" name="town" >
                 </div>
                 <div class="col">
                     <label>County</label>
@@ -55,15 +54,16 @@
             <div class="row">
                 <div class="col">
                     <label>Postcode</label>
-                    <input type="text" name="postcode" required>
+                    <input type="text" name="postcode" >
                 </div>
                 <div class="col">
                     <label>Country</label>
                     <div class="select">
-                        <select name="country" required>
+                        <select name="country" >
                             <option value="">Select country...</option>
-                            <option value="United Kingdom">United Kingdom</option>
-                            <option value="United States">United States</option>
+                            <option value="united kingdom">United Kingdom</option>
+                            <option value="united states">United States</option>
+                            <option value="nigeria">Nigeria</option>
                         </select>
                     </div>
                 </div>
@@ -78,12 +78,13 @@
                 <div class="col">
                     <label>Your C.V</label>
                     <div class="row">
-                        <span style="margin-right: 10px;">Select a file</span> <input type="file" name="cv" required>
+                        <span style="margin-right: 10px;">Select a file</span> <input type="file" name="cv" title="Max file upload size is 40 MB">
                     </div>
                 </div>
             </div>
             <button type="submit" class="submit">Submit</button>
         </form>
     </div>
+    <script src="./lib/scripts/script.js"></script>
 </body>
 </html>
