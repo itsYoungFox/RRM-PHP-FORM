@@ -95,6 +95,7 @@ form .row .col .select select {
 
 form .row .col textarea {
     height: 150px;
+    resize: vertical;
 }
 
 .submit {
