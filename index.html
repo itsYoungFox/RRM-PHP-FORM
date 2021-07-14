@@ -13,26 +13,26 @@
         <form method="POST" id="form">
             <div class="row">
                 <div class="col">
-                    <label>First name</label><input type="text" name="firstname" >
+                    <label>First name</label><input type="text" name="firstname" required>
                 </div>
                 <div class="col">
-                    <label>Last name</label><input type="text" name="lastname" >
+                    <label>Last name</label><input type="text" name="lastname" required>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
-                    <label>Email address</label><input type="email" name="email" >
+                    <label>Email address</label><input type="email" name="email" required>
                 </div>
                 <div class="col">
-                    <label>Telephone number</label><input type="tel" name="teleNumber" >
+                    <label>Telephone number</label><input type="tel" name="teleNumber" maxlength="14" required>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
                     <label>Address 1</label>
-                    <input type="text" name="address1" >
+                    <input type="text" name="address1" required>
                 </div>
                 <div class="col">
                     <label>Address 2</label>
@@ -43,23 +43,23 @@
             <div class="row">
                 <div class="col">
                     <label>Town</label>
-                    <input type="text" name="town" >
+                    <input type="text" name="town" required>
                 </div>
                 <div class="col">
                     <label>County</label>
-                    <input type="text" name="county">
+                    <input type="text" name="county" required>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
                     <label>Postcode</label>
-                    <input type="text" name="postcode" >
+                    <input type="text" name="postcode" required>
                 </div>
                 <div class="col">
                     <label>Country</label>
                     <div class="select">
-                        <select name="country" >
+                        <select name="country" required>
                             <option value="">Select country...</option>
                             <option value="united kingdom">United Kingdom</option>
                             <option value="united states">United States</option>
@@ -78,13 +78,13 @@
                 <div class="col">
                     <label>Your C.V</label>
                     <div class="row">
-                        <span style="margin-right: 10px;">Select a file</span> <input type="file" name="cv" title="Max file upload size is 40 MB">
+                        <span style="margin-right: 10px;">Select a file</span> <input type="file" name="cv" title="Max file upload size is 40 MB" accept=".pdf, .doc, .docx, .png, .jpg" required>
                     </div>
                 </div>
             </div>
             <button type="submit" class="submit">Submit</button>
         </form>
     </div>
-    <script src="./lib/scripts/script.js"></script>
+    <script src="./lib/scripts/script.js?v=2"></script>
 </body>
 </html>

@@ -105,5 +105,10 @@ class Database
             throw New Exception( $e->getMessage() );
         }
     }
+
+    // Filter Illegal Characters from String
+    public function escapeString( $string = "" ){
+        return $this->connection->real_escape_string( $string );
+    }
 }
 ?>

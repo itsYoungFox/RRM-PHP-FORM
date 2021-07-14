@@ -6,6 +6,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . $root_path . '/src/class/database.php')
 class formFixture
 {
     public $db;
+    public $response = array();
 
     public function __construct() {
         $this->db = new Database();
@@ -17,7 +18,6 @@ class formFixture
     }
 
     public function load($formObject = null) {
-        $response = array();
         // Create table
         (function($f){
             $sql = '
@@ -54,7 +54,8 @@ class formFixture
                             $dataTypeMap .= ($key == 'postcode') ? 's' : $this->data_type($value);
                         }
                         
-                        $values[] = $value;
+                        // Filter and assign values
+                        $values[] = $this->db->escapeString($value);
                         $fieldIndex++;
                     }
 
@@ -63,14 +64,14 @@ class formFixture
                     try {
                         
                         $id = $this->db->Insert($query, $values);
-                        $response['id'] = $id;
-                        $response['return'] = true;
-                        return $response;
+                        $this->response['id'] = $id;
+                        $this->response['return'] = true;
+                        return;
 
                     } catch (Exception $e) {
                         throw New Exception( $e->getMessage() );
                     }
-                    $response['return'] = false;
+                    $this->response['return'] = false;
                 })($f);
             } else {
                 echo "Error creating table";
@@ -78,7 +79,7 @@ class formFixture
         })($formObject);
         
         // Return all response data
-        return $response;
+        return $this->response;
     }
 }
 ?>

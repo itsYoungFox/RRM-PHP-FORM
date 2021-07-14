@@ -14,7 +14,6 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 # Set objects
-$standard = new Standard();
 $form = new Form();
 $formFixture = new formFixture();
 $response = array();
@@ -22,9 +21,11 @@ $response = array();
 # Upload and store files
 if (count($_FILES) == 1) {
     $uploads_dir = $_SERVER['DOCUMENT_ROOT'] . $root_path . '/src/uploads/';
+    if (!file_exists($uploads_dir)) mkdir($uploads_dir, 0777, true);
+    
     $destination = $uploads_dir . basename($_FILES["cv"]["name"]);
-
     $upload_status = move_uploaded_file($_FILES["cv"]["tmp_name"], $destination);
+    
     if ($upload_status) {
         $response['upload_status'] = true;
         $response['file_path'] = $destination;
@@ -40,6 +41,10 @@ if (count($_FILES) == 1) {
 # Get all data from $_POST
 $data = Standard::filter_post_data($_POST);
 foreach ($data as $key => $value) {
+    
+    // Sanitize String
+    $value = ($key !== "email") ? filter_var($value, FILTER_SANITIZE_STRING) : filter_var($value, FILTER_SANITIZE_EMAIL);
+
     switch($key) {
         case 'firstname':
             $form->set_firstname($value);
@@ -50,12 +55,11 @@ foreach ($data as $key => $value) {
             break;
 
         case 'email':
-            $email = filter_var($value, FILTER_SANITIZE_EMAIL);
-            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $form->set_email($email);
+            if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                $form->set_email($value);
             } else {
                 $response['error'] = 'invalid email';
-                $response['field'] = $email;
+                $response['field'] = $value;
                 echo json_encode($response);
                 exit();
             }
@@ -99,7 +103,7 @@ foreach ($data as $key => $value) {
 // store form in database
 $storeData = $formFixture->load((array)$form);
 
-$response['store_status'] = $storeData;
+$response['db_store_status'] = $storeData;
 
 // Remove this block if you want to run SMTP mailing -------------------
 echo json_encode($response);
@@ -113,6 +117,10 @@ if ($storeData) {
      */
     $mail = new PHPMailer(true);
     $domain = "domain.com";
+
+    $recipient_email = $form->get_email();
+    $r_firstname = $form->get_firstname();
+    $r_lastname = $form->get_lastname();
     
     try {
         //Server settings
@@ -121,17 +129,13 @@ if ($storeData) {
         $mail->Host       = 'smtp.'.$domain;                     //Set the SMTP server to send through
         $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
         $mail->Username   = 'user@'.$domain;                     //SMTP username
-        $mail->Password   = 'secret';                               //SMTP password
+        $mail->Password   = '[SMTP_PASSWORD_GOES_HERE]';                               //SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
         $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
     
         //Recipients
         $mail->setFrom('from@'.$domain, 'Mailer');
-        $mail->addAddress('joe@'.$domain, 'Joe User');     //Add a recipient
-        // $mail->addAddress('ellen@'.$domain);               //Name is optional
-        // $mail->addReplyTo('info@'.$domain, 'Information');
-        // $mail->addCC('cc@'.$domain);
-        // $mail->addBCC('bcc@'.$domain);
+        $mail->addAddress($recipient_email, "$r_firstname $r_lastname");     //Add a recipient
     
         //Attachments
         // $mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
@@ -139,14 +143,25 @@ if ($storeData) {
     
         //Content
         $mail->isHTML(true);                                  //Set email format to HTML
-        $mail->Subject = 'Here is the subject';
-        $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+        $mail->Subject = 'Application received';
+        
+        $mail->Body    = '
+            <h1>Hello '.$r_firstname.',</h1>
+            <p>
+                Your application has been received and will be viewed by the HR.
+            </p>
+        ';
+
+        $mail->AltBody = 'Your application has been received and will be viewed by the HR.';
     
         $mail->send();
-        echo 'Message has been sent';
+        $response['mail_status'] = true;
+
+         // Give final response
+        echo json_encode($response);
+        exit();
     } catch (Exception $e) {
-        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        throw New Exception( $e->getMessage() );
     }
 }
 ?>
