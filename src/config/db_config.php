@@ -1,6 +1,6 @@
 <?php
-    DEFINE('db_user', 'root');          // Database user
-    DEFINE('db_pass', '');              // Database password
-    DEFINE('db_name', 'rrm_db');        // Database name
-    DEFINE('db_host', 'localhost');     // Database host
+    define('DB_USERNAME', 'root');      // Database user
+    define('DB_PASSWORD', '');          // Database password
+    define('DB_DATABASE', 'rrm_db');    // Database name
+    define('DB_SERVER', 'localhost');   // Database host
 ?>

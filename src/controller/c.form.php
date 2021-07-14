@@ -15,14 +15,14 @@ $formFixture = new formFixture();
 $response = array();
 
 # Upload and store files
-$cv_path = '/';
+$cv_path = 'C:/';
 if (count($_FILES) == 1) {
     print_r($_FILES); // DEBUG: Check if files exist
     $form->set_cv_path($cv_path);
 }
 
 # Get all data from $_POST
-$data = $standard->filter_post_data($_POST);
+$data = Standard::filter_post_data($_POST);
 foreach ($data as $key => $value) {
     switch($key) {
         case 'firstname':
@@ -61,6 +61,10 @@ foreach ($data as $key => $value) {
             $form->set_town($value);
             break;
 
+        case 'postcode':
+            $form->set_postcode($value);
+            break;
+
         case 'county':
             $form->set_county($value);
             break;
@@ -80,8 +84,30 @@ foreach ($data as $key => $value) {
 $storeData = $formFixture->load((array)$form);
 
 
+
+
 // Send mail
 if ($storeData) {
-    
+    /**
+     * SEND MAIL TO CLIENT
+     */
+    $mail = new PHPMailer();
+    $mail->IsSMTP(); // enable SMTP
+    $mail->SMTPAuth = true; // authentication enabled
+    $mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for GMail
+    $mail->Host = 'smtp.gmail.com';
+    $mail->Port = 465; // or 587
+    $mail->IsHTML(true);
+    $mail->Username = 'your_email';
+    $mail->Password = 'your_password';
+    $mail->From = 'your_email';
+    $mail->FromName = 'Your Name';
+    $mail->AddAddress('your_email', 'Your Name');
+    $mail->Subject = 'Form Submission';
+    $mail->Body = 'Form Submission';
+    $mail->AltBody = 'Form Submission';
+    $mail->CharSet = 'UTF-8';
+    $mail->AddAttachment($_FILES['cv']['tmp_name']);
+    $mail->Send();
 }
 ?>
