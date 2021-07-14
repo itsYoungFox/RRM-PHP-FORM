@@ -14,6 +14,7 @@ A responsive PHP form according to the image given using Vanilla PHP, CSS, HTML,
 - Apache
 - MySQL
 - XAMPP (Windows and OSX)
+- Composer (Needed for PHPmailer)
 
 
 ## Installation
@@ -25,7 +26,12 @@ A responsive PHP form according to the image given using Vanilla PHP, CSS, HTML,
 git clone https://github.com/itsYoungFox/RRM-PHP-FORM.git
 ```
 
-3. Start apache and mariadb server
+3. Run Composer to install PHPmailer (or else it will bug out)
+```
+composer install
+```
+
+4. Start apache and mariadb server
 ```
 // OSX or WINDOWS
 Start apache and mariadb server in xampp for OSX or Windows
@@ -39,13 +45,17 @@ systemctl apache2 start
 systemctl mariadb start
 ```
 
-4. Create the Database
+5. Create the Database
 ```
 // Run the create database SQL command
 CREATE DATABASE rrm_db
 ```
 
-5. Open your desired web browser and navigate to `http://localhost/RRM-PHP-FORM`
+6. Open your desired web browser and navigate to `http://localhost/RRM-PHP-FORM`
 
 
 NOTE: The project in this repo is a job interview task and not a personal project.
+
+## EXTRA
+Configure `PHPMailer` by editing the parameters in the `RRM-PHP-FORM/src/controller/c.form.php` from line `131`
+If you encouter any problem please create an issue or drop a note.
