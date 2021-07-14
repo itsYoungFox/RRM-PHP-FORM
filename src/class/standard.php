@@ -10,13 +10,6 @@ class Standard
         return $postData;
     }
 
-    // Generate random string
-    public static function random_strings($length_of_string) {
-        // String of all alphanumeric character
-        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        return substr(str_shuffle($str_result), 0, $length_of_string);
-    }
-
     // Replicate string
     public static function replicate_string($value, $length) {
         $replicated_str = '';

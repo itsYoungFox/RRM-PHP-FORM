@@ -30,10 +30,29 @@ class formFixture
                     reg_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             ';
-            // Insert data into table
-            $sql = (String) $sql;
+
+            // Create Table if not exists
+            $sql = (String) $sql; // Typecast
             $query = $this->db->ExecuteQuery( $sql );
+            
             if ($query) {
+                // Check if email exists
+                $email = '';
+                foreach ($f as $key => $value) {
+                    $key = str_replace('Form', '', $key);
+                    $key = preg_replace('/[\x00-\x1F\x7F]/', '', $key);
+                    if ($key == 'email') {
+                        $email = $value;
+                    }
+                }
+                $data = $this->db->select( "SELECT * FROM applicants WHERE email = '$email'" );
+                if (count($data) == 1) {
+                    $this->response['status'] = 'email_exists';
+                    $this->response['message'] = 'Email already exists';
+                    return $this->response; // exit load method
+                }
+
+                // Insert data into table
                 (function($form){
                     $fieldIndex = 0;
                     $fQ = ''; // Field
@@ -65,6 +84,7 @@ class formFixture
                         
                         $id = $this->db->Insert($query, $values);
                         $this->response['id'] = $id;
+                        $this->response['status'] = 'success';
                         $this->response['return'] = true;
                         return;
 

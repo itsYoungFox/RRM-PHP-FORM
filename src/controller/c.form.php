@@ -18,26 +18,6 @@ $form = new Form();
 $formFixture = new formFixture();
 $response = array();
 
-# Upload and store files
-if (count($_FILES) == 1) {
-    $uploads_dir = $_SERVER['DOCUMENT_ROOT'] . $root_path . '/src/uploads/';
-    if (!file_exists($uploads_dir)) mkdir($uploads_dir, 0777, true);
-    
-    $destination = $uploads_dir . basename($_FILES["cv"]["name"]);
-    $upload_status = move_uploaded_file($_FILES["cv"]["tmp_name"], $destination);
-    
-    if ($upload_status) {
-        $response['upload_status'] = true;
-        $response['file_path'] = $destination;
-    } else {
-        $response['upload_status'] = false;
-        $response['file_path'] = '';
-    }    
-    
-    // Set file path
-    $form->set_cv_path($response['file_path']);
-}
-
 # Get all data from $_POST
 $data = Standard::filter_post_data($_POST);
 foreach ($data as $key => $value) {
@@ -96,14 +76,51 @@ foreach ($data as $key => $value) {
         case 'description':
             $form->set_description($value);
             break;  
+
+        default:
+            break;
     }
 
 }
 
+# Save file path
+if (count($_FILES) == 1) {
+    $uploads_dir = $_SERVER['DOCUMENT_ROOT'] . $root_path . '/src/uploads/';
+    if (!file_exists($uploads_dir)) mkdir($uploads_dir, 0777, true);
+    $destination = $uploads_dir . basename($_FILES["cv"]["name"]);
+    // Set file path
+    $form->set_cv_path($destination);
+}
+
+
 // store form in database
 $storeData = $formFixture->load((array)$form);
-
 $response['db_store_status'] = $storeData;
+
+if ($response['db_store_status']['status'] == 'email_exists') {
+    $response['error'] = 'email_exists';
+    echo json_encode($response);
+    exit(); 
+}
+
+if ($response['db_store_status']['status'] !== 'success') {
+    $response['error'] = 'internal_server_error';
+    echo json_encode($response);
+    exit(); 
+}
+
+
+// Move file to uploads folder
+if (count($_FILES) == 1) {
+    $upload_status = move_uploaded_file($_FILES["cv"]["tmp_name"], $destination);
+    if ($upload_status) {
+        $response['upload_status'] = true;
+        $response['file_path'] = $destination;
+    } else {
+        $response['upload_status'] = false;
+        $response['file_path'] = '';
+    }
+}
 
 // Remove this block if you want to run SMTP mailing -------------------
 echo json_encode($response);
