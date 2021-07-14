@@ -71,13 +71,14 @@ class formFixture
                         throw New Exception( $e->getMessage() );
                     }
                     $response['return'] = false;
-                    return $response;
                 })($f);
             } else {
                 echo "Error creating table";
             }
         })($formObject);
-        // Check if email already exists
+        
+        // Return all response data
+        return $response;
     }
 }
 ?>

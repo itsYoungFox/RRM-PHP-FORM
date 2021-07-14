@@ -7,6 +7,11 @@ $root_path = '/RRM-PHP-FORM';
 require_once($_SERVER['DOCUMENT_ROOT'] . $root_path . '/src/class/standard.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . $root_path . '/src/class/form.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . $root_path . '/src/fixtures/form.fixture.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . $root_path . '/vendor/autoload.php');
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 
 # Set objects
 $standard = new Standard();
@@ -15,10 +20,21 @@ $formFixture = new formFixture();
 $response = array();
 
 # Upload and store files
-$cv_path = 'C:/';
 if (count($_FILES) == 1) {
-    print_r($_FILES); // DEBUG: Check if files exist
-    $form->set_cv_path($cv_path);
+    $uploads_dir = $_SERVER['DOCUMENT_ROOT'] . $root_path . '/src/uploads/';
+    $destination = $uploads_dir . basename($_FILES["cv"]["name"]);
+
+    $upload_status = move_uploaded_file($_FILES["cv"]["tmp_name"], $destination);
+    if ($upload_status) {
+        $response['upload_status'] = true;
+        $response['file_path'] = $destination;
+    } else {
+        $response['upload_status'] = false;
+        $response['file_path'] = '';
+    }    
+    
+    // Set file path
+    $form->set_cv_path($response['file_path']);
 }
 
 # Get all data from $_POST
@@ -83,31 +99,54 @@ foreach ($data as $key => $value) {
 // store form in database
 $storeData = $formFixture->load((array)$form);
 
+$response['store_status'] = $storeData;
 
+// Remove this block if you want to run SMTP mailing -------------------
+echo json_encode($response);
+exit(); 
+// ---------------------------------------------------------------------
 
-
-// Send mail
+// Send email
 if ($storeData) {
     /**
      * SEND MAIL TO CLIENT
      */
-    $mail = new PHPMailer();
-    $mail->IsSMTP(); // enable SMTP
-    $mail->SMTPAuth = true; // authentication enabled
-    $mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for GMail
-    $mail->Host = 'smtp.gmail.com';
-    $mail->Port = 465; // or 587
-    $mail->IsHTML(true);
-    $mail->Username = 'your_email';
-    $mail->Password = 'your_password';
-    $mail->From = 'your_email';
-    $mail->FromName = 'Your Name';
-    $mail->AddAddress('your_email', 'Your Name');
-    $mail->Subject = 'Form Submission';
-    $mail->Body = 'Form Submission';
-    $mail->AltBody = 'Form Submission';
-    $mail->CharSet = 'UTF-8';
-    $mail->AddAttachment($_FILES['cv']['tmp_name']);
-    $mail->Send();
+    $mail = new PHPMailer(true);
+    $domain = "domain.com";
+    
+    try {
+        //Server settings
+        $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'smtp.'.$domain;                     //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = 'user@'.$domain;                     //SMTP username
+        $mail->Password   = 'secret';                               //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+        $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+    
+        //Recipients
+        $mail->setFrom('from@'.$domain, 'Mailer');
+        $mail->addAddress('joe@'.$domain, 'Joe User');     //Add a recipient
+        // $mail->addAddress('ellen@'.$domain);               //Name is optional
+        // $mail->addReplyTo('info@'.$domain, 'Information');
+        // $mail->addCC('cc@'.$domain);
+        // $mail->addBCC('bcc@'.$domain);
+    
+        //Attachments
+        // $mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
+        // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
+    
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = 'Here is the subject';
+        $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+    
+        $mail->send();
+        echo 'Message has been sent';
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    }
 }
 ?>
